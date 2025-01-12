@@ -5,14 +5,12 @@ fn main() -> ! {
 
     server.get("/", |req: http::Request, res: &mut http::Response| {
         res.headers.set_header("Yourmom", "abc123");
-        println!("{:#?}", req.body);
         http::send_file("templates/hello.html")
     });
 
 
     server.post("/", |req: http::Request, res: &mut http::Response| {
         res.headers.set_header("Yourmom", "abc123");
-        println!("{:#?}", req.body);
         http::send_file("templates/hello.html")
     });
 

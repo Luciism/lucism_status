@@ -1,4 +1,4 @@
-use super::handlers::{empty_response, not_found, RouteHandler};
+use super::handlers::{default_route_handler, empty_response, not_found, RouteHandler};
 use super::req::{build_request, RequestMethod};
 use super::res::{Response, ResponseBody};
 use super::threading;
@@ -35,7 +35,12 @@ impl HTTPServer {
         let handler = match request {
             Ok(ref request) => match self.get_route(&request.path, &request.method) {
                 Some(route) => route.handler,
-                None => not_found,
+                None => {
+                    match default_route_handler(request) {
+                        Some(handler) => handler,
+                        None => not_found
+                    }
+                },
             },
             Err(_) => empty_response,
         };
@@ -46,7 +51,7 @@ impl HTTPServer {
                 Ok(request) => handler(request, &mut response),
                 Err(err) => {
                     response.status = err.status;
-                    ResponseBody { data: err.cause }
+                    ResponseBody::from_data(err.cause)
                 }
             };
 
