@@ -7,5 +7,5 @@ mod status;
 mod threading;
 
 pub use server::HTTPServer;
-pub use res::{Response, send_file};
+pub use res::{Response, send_file, send_string};
 pub use req::Request;

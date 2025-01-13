@@ -8,6 +8,8 @@ use super::{
     status::Status,
 };
 
+const MAX_CONTENT: usize = 2_097_152; // 2MB
+
 #[derive(Debug, PartialEq)]
 pub enum RequestMethod {
     GET,
@@ -160,15 +162,18 @@ fn read_body(
                 Ok(content_length) => content_length,
                 Err(_) => return Err(err_bad_request()),
             };
+            if content_length > MAX_CONTENT {
+                return Err(err_bad_request());
+            }
+
             let mut body = Vec::with_capacity(content_length);
             body.resize(content_length, 0);
 
-            let _ = buf_reader.read(&mut body).map_err(|_| err_bad_request())?;
-            if body.len() != content_length {
+            let bytes_read = buf_reader.read(&mut body).map_err(|_| err_bad_request())?;
+            if bytes_read != content_length {
                 println!(
                     "Wrong length: got {}, expected {}",
-                    body.len(),
-                    content_length
+                    bytes_read, content_length
                 );
                 return Err(err_bad_request());
             }
