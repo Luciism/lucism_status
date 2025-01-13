@@ -79,6 +79,7 @@ pub fn send_file(filename: &str) -> ResponseBody {
             "json" => "application/json",
             "css" => "text/css",
             "html" => "text/html",
+            "htm" => "text/html",
             "js" => "text/javascript",
             "png" => "image/png",
             "jpg" => "image/jpeg",
